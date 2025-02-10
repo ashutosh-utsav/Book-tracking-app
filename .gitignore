@@ -1,0 +1,11 @@
+# Ignore environment variables
+server/.env
+
+# Ignore Node.js dependencies
+server/node_modules/
+
+# Ignore virtual environment in root
+envbook/
+
+# Ignore log files and cache
+*.log
