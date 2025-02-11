@@ -1,12 +1,21 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [lists, setLists] = useState([]);
   const [trendingBooks, setTrendingBooks] = useState([]);
   const [newListName, setNewListName] = useState("");
 
+  const navigate = useNavigate(); // Hook for navigation
   const userId = localStorage.getItem("userId"); 
   console.log("User ID being used:", userId);
+
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("token");
+    navigate("/login"); // Redirect to login page
+  };
 
   // Fetch User Lists
   useEffect(() => {
@@ -54,7 +63,13 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h2>Welcome to Your Dashboard 🎉</h2>
+      {/* Logout Button in Top-Right */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <h2>Welcome to Your Dashboard 🎉</h2>
+        <button onClick={handleLogout} style={{ backgroundColor: "red", color: "white", padding: "10px", borderRadius: "5px" }}>
+          Logout
+        </button>
+      </div>
 
       {/* User Lists Section */}
       <h3>Your Lists</h3>
