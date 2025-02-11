@@ -1,26 +1,88 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
+  const [lists, setLists] = useState([]);
+  const [trendingBooks, setTrendingBooks] = useState([]);
+  const [newListName, setNewListName] = useState("");
 
+  const userId = localStorage.getItem("userId"); 
+  console.log("User ID being used:", userId);
+
+  // Fetch User Lists
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login"); // Redirect to login if no token
+    if (!userId) {
+      console.warn("No userId found in localStorage! Not fetching lists.");
+      return;
     }
-  }, [navigate]);
+
+    fetch(`http://localhost:5000/lists/${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched Lists:", data); // Debugging
+        setLists(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => console.error("Error fetching lists:", err));
+  }, [userId]);
+
+  // Fetch Trending Books
+  useEffect(() => {
+    fetch("http://localhost:5000/lists/trending")
+      .then((res) => res.json())
+      .then((data) => setTrendingBooks(Array.isArray(data) ? data : []))
+      .catch((err) => console.error(err));
+  }, []);
+
+  // Create New List
+  const createList = () => {
+    if (!userId) {
+      console.warn("Cannot create list: No userId found.");
+      return;
+    }
+
+    fetch("http://localhost:5000/lists", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, name: newListName, books: [] }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("New List Created:", data); // Debugging
+        setLists((prevLists) => [...prevLists, data]);
+      })
+      .catch((err) => console.error("Error creating list:", err));
+  };
 
   return (
-    // console.log("token", localStorage.getItem("token")),
-    
-    
     <div>
       <h2>Welcome to Your Dashboard 🎉</h2>
-      <p>You have successfully logged in!</p>
-      <button onClick={() => { localStorage.removeItem("token"); navigate("/login"); }}>
-        Logout
-      </button>
+
+      {/* User Lists Section */}
+      <h3>Your Lists</h3>
+      <input type="text" placeholder="New List Name" onChange={(e) => setNewListName(e.target.value)} />
+      <button onClick={createList}>Create List</button>
+      {lists.length > 0 ? (
+        <ul>
+          {lists.map((list) => (
+            <li key={list._id}>{list.name}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No lists found. Create one!</p>
+      )}
+
+      {/* Trending Books Section */}
+      <h3>Trending Books 📚</h3>
+      {trendingBooks.length > 0 ? (
+        <ul>
+          {trendingBooks.map((book) => (
+            <li key={book.id}>
+              <strong>{book.volumeInfo.title}</strong> by {book.volumeInfo.authors?.join(", ")}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No trending books available.</p>
+      )}
     </div>
   );
 };
