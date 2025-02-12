@@ -1,10 +1,5 @@
 import List from "../models/List.js";
 
-/**
- * @desc    Get all lists of a user
- * @route   GET /lists/:userId
- * @access  Public
- */
 export const getUserLists = async (req, res) => {
   try {
     console.log("Fetching lists for user:", req.params.userId);
@@ -16,11 +11,7 @@ export const getUserLists = async (req, res) => {
   }
 };
 
-/**
- * @desc    Get a single list by ID
- * @route   GET /lists/single/:listId
- * @access  Public
- */
+
 export const getListById = async (req, res) => {
   try {
     const list = await List.findById(req.params.listId);
@@ -34,11 +25,6 @@ export const getListById = async (req, res) => {
   }
 };
 
-/**
- * @desc    Create a new list
- * @route   POST /lists
- * @access  Public
- */
 export const createList = async (req, res) => {
   const { userId, name, books } = req.body;
   try {
@@ -52,11 +38,7 @@ export const createList = async (req, res) => {
   }
 };
 
-/**
- * @desc    Update a list (rename or modify books)
- * @route   PUT /lists/:listId
- * @access  Public
- */
+
 export const updateList = async (req, res) => {
   const { name, books } = req.body;
   try {
@@ -78,11 +60,7 @@ export const updateList = async (req, res) => {
   }
 };
 
-/**
- * @desc    Delete a list
- * @route   DELETE /lists/:listId
- * @access  Public
- */
+
 export const deleteList = async (req, res) => {
   try {
     console.log("Deleting list:", req.params.listId);
@@ -98,3 +76,27 @@ export const deleteList = async (req, res) => {
     res.status(500).json({ error: "Error deleting list" });
   }
 };
+
+export const addBookToList = async (req, res) => {
+  const { title, authors, link } = req.body;
+  const { userId, listName } = req.params;
+
+  try {
+    let list = await List.findOne({ user: userId, name: listName });
+
+    if (!list) {
+      console.log(`Creating new "Want to Read" list for user: ${userId}`);
+      list = new List({ user: userId, name: listName, books: [] });
+    }
+
+    const book = { title, authors, link };
+    list.books.push(book);
+    await list.save();
+
+    res.json(list);
+  } catch (error) {
+    console.error("Error adding book to list:", error.message);
+    res.status(500).json({ error: "Error adding book to list" });
+  }
+};
+

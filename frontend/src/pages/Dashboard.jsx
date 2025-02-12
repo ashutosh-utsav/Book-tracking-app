@@ -152,8 +152,8 @@ const Dashboard = () => {
             <li key={book.id}>
               <strong>{book.volumeInfo.title}</strong> by {book.volumeInfo.authors?.join(", ")}
               <br />
-              <a href={book.volumeInfo.infoLink} target="_blank" rel="noopener noreferrer">Read</a>
-              <button onClick={() => addBookToList(book, selectedList)}>Add to List</button>
+              
+              {/* <button onClick={() => addBookToList(book, selectedList)}>Add to List</button> */}
               <button onClick={() => addBookToList(book, "want-to-read")}>Want to Read</button>
             </li>
           ))}

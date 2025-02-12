@@ -6,11 +6,7 @@ import mongoose from "mongoose";
 dotenv.config();
 const router = express.Router();
 
-/**
- * @desc    Fetch trending books from Google Books API
- * @route   GET /lists/trending
- * @access  Public
- */
+
 router.get("/trending", async (req, res) => {
   try {
     console.log("Fetching trending books...");
@@ -28,11 +24,7 @@ router.get("/trending", async (req, res) => {
   }
 });
 
-/**
- * @desc    Get all lists of a user
- * @route   GET /lists/:userId
- * @access  Public
- */
+
 router.get("/:userId", async (req, res) => {
   try {
     console.log("Fetching lists for user:", req.params.userId);
@@ -49,11 +41,7 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-/**
- * @desc    Get a single list by ID
- * @route   GET /lists/single/:listId
- * @access  Public
- */
+
 router.get("/single/:listId", async (req, res) => {
   try {
     console.log("Fetching list:", req.params.listId);
@@ -70,11 +58,7 @@ router.get("/single/:listId", async (req, res) => {
   }
 });
 
-/**
- * @desc    Create a new list
- * @route   POST /lists
- * @access  Public
- */
+
 router.post("/", async (req, res) => {
     try {
       console.log("Received request body:", req.body); // Debugging
@@ -99,11 +83,7 @@ router.post("/", async (req, res) => {
   });
   
 
-/**
- * @desc    Update a list (rename or modify books)
- * @route   PUT /lists/:listId
- * @access  Public
- */
+
 router.put("/:listId", async (req, res) => {
   const { name, books } = req.body;
   try {
@@ -125,11 +105,7 @@ router.put("/:listId", async (req, res) => {
   }
 });
 
-/**
- * @desc    Delete a list
- * @route   DELETE /lists/:listId
- * @access  Public
- */
+
 router.delete("/:listId", async (req, res) => {
   try {
     console.log("Deleting list:", req.params.listId);
